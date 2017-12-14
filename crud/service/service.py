@@ -39,6 +39,12 @@ class CrudSite:
         self._registry = {}
 
     def regiser(self, model, crud_config=None):
+        """
+        将所有模型类中的类注册到self._registry，方便后期遍历循环
+        :param model: 模型类
+        :param crud_config: 要注册的配置类
+        :return:
+        """
         if not crud_config:
             crud_config = CrudConfig
         self._registry[model] = crud_config(model, self)
