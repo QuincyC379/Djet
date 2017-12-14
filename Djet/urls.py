@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from crud.service import service
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('crud/', service.site.urls),
+
 ]
