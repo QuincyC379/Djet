@@ -1,8 +1,11 @@
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.urls import path
 
 
 class CrudConfig:
+    list_display = []
+
     def __init__(self, model, crud_site):
         self.model = model
         self.crud_site = crud_site
@@ -22,7 +25,22 @@ class CrudConfig:
         return urlpatterns
 
     def changelist_view(self, request):
-        return HttpResponse('展示')
+
+        """
+        处理展示数据
+        """
+        data_list = self.model.objects.all()
+        new_data_list = []
+        for data in data_list:
+            temp = []
+            for field in self.list_display:
+                if isinstance(field, str):
+                    val = getattr(data, field)
+                else:
+                    val = field(self, data)
+                temp.append(val)
+            new_data_list.append(temp)
+        return render(request, 'change_list.html', {'data_list': new_data_list})
 
     def add_view(self, request):
         return HttpResponse('添加')
@@ -35,12 +53,13 @@ class CrudConfig:
 
 
 class CrudSite:
+
     def __init__(self):
         self._registry = {}
 
     def regiser(self, model, crud_config=None):
         """
-        将所有模型类中的类注册到self._registry，方便后期遍历循环
+        将所有模型类中的类注册到self._registry中，方便后期遍历循环
         :param model: 模型类
         :param crud_config: 要注册的配置类
         :return:

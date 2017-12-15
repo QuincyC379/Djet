@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+	<div class="row">
+		<table class="table table-bordered table-striped">
+			<thead></thead>
+			<tbody>
+			{% for data in data_list %}
+				<tr>
+					{% for datum in data %}
+						<td>{{ datum }}</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>
