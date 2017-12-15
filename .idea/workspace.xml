@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a83bb20b-1437-49cb-a551-5c0a130614ec" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Djet/urls.py" afterPath="$PROJECT_DIR$/Djet/urls.py" />
       <change beforePath="$PROJECT_DIR$/crud/service/service.py" afterPath="$PROJECT_DIR$/crud/service/service.py" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
+      <change beforePath="$PROJECT_DIR$/crud/templates/change_list.html" afterPath="$PROJECT_DIR$/crud/templates/change_list.html" />
       <change beforePath="$PROJECT_DIR$/web02/crud.py" afterPath="$PROJECT_DIR$/web02/crud.py" />
-      <change beforePath="$PROJECT_DIR$/web02/models.py" afterPath="$PROJECT_DIR$/web02/models.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -52,7 +49,7 @@
       <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Djet/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
+            <state relative-caret-position="799">
               <caret line="40" column="27" lean-forward="false" selection-start-line="40" selection-start-column="27" selection-end-line="40" selection-end-column="27" />
               <folding />
             </state>
@@ -62,30 +59,48 @@
       <file leaf-file-name="service.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/crud/service/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="864">
-              <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+            <state relative-caret-position="891">
+              <caret line="63" column="33" lean-forward="true" selection-start-line="63" selection-start-column="33" selection-end-line="63" selection-end-column="33" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#195#248#0" expanded="false" />
+                <element signature="e#292#314#0" expanded="false" />
+                <element signature="e#348#789#0" expanded="false" />
+                <element signature="e#433#762#0" expanded="false" />
+                <element signature="e#839#915#1" expanded="false" />
+                <element signature="e#1206#1236#1" expanded="false" />
+                <element signature="e#1352#1633#0" expanded="false" />
+                <element signature="e#1422#1594#0" expanded="false" />
+                <element signature="e#1785#1810#0" expanded="false" />
+                <element signature="e#1864#1889#0" expanded="false" />
+                <element signature="e#1943#1968#0" expanded="false" />
+                <element signature="e#1992#2738#0" expanded="false" />
+                <element signature="e#2020#2039#0" expanded="false" />
+                <element signature="e#2097#2358#0" expanded="false" />
+                <element signature="e#2097#2236#1" expanded="false" />
+                <element signature="e#2402#2438#0" expanded="false" />
+                <element signature="e#2472#2738#0" expanded="false" />
+                <element signature="e#2563#2710#0" expanded="false" />
+                <element signature="e#2578#2710#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="change_list.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="change_list.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/crud/templates/change_list.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="19" column="24" lean-forward="true" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
+            <state relative-caret-position="-27">
+              <caret line="14" column="24" lean-forward="true" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="crud.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="crud.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web02/crud.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+            <state relative-caret-position="486">
+              <caret line="18" column="67" lean-forward="true" selection-start-line="18" selection-start-column="67" selection-end-line="18" selection-end-column="67" />
               <folding>
                 <element signature="e#19#64#0" expanded="true" />
               </folding>
@@ -96,8 +111,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web02/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+            <state relative-caret-position="147">
+              <caret line="10" column="60" lean-forward="true" selection-start-line="10" selection-start-column="60" selection-end-line="10" selection-end-column="60" />
               <folding />
             </state>
           </provider>
@@ -106,22 +121,10 @@
       <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Djet/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="284">
-              <caret line="21" column="32" lean-forward="false" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
+            <state relative-caret-position="-96">
+              <caret line="11" column="25" lean-forward="true" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
               <folding>
                 <element signature="e#628#656#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="apps.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/crud/apps.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="8" column="38" lean-forward="false" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
-              <folding>
-                <element signature="e#0#33#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -148,8 +151,8 @@
         <option value="$PROJECT_DIR$/web01/crud.py" />
         <option value="$PROJECT_DIR$/Djet/urls.py" />
         <option value="$PROJECT_DIR$/crud/templates.html" />
-        <option value="$PROJECT_DIR$/crud/service/service.py" />
         <option value="$PROJECT_DIR$/web02/models.py" />
+        <option value="$PROJECT_DIR$/crud/service/service.py" />
         <option value="$PROJECT_DIR$/crud/templates/change_list.html" />
         <option value="$PROJECT_DIR$/web02/crud.py" />
       </list>
@@ -281,14 +284,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1320" height="784" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32027256" sideWeight="0.5032051" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36797273" sideWeight="0.49679488" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.197615" sideWeight="0.49679488" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27597955" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25560898" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25560898" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28685898" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -330,7 +334,25 @@
         <state relative-caret-position="1080">
           <caret line="40" column="38" lean-forward="true" selection-start-line="40" selection-start-column="38" selection-end-line="40" selection-end-column="38" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#195#248#0" expanded="false" />
+            <element signature="e#292#314#0" expanded="false" />
+            <element signature="e#348#789#0" expanded="false" />
+            <element signature="e#433#762#0" expanded="false" />
+            <element signature="e#839#915#1" expanded="false" />
+            <element signature="e#1206#1236#1" expanded="false" />
+            <element signature="e#1352#1633#0" expanded="false" />
+            <element signature="e#1422#1594#0" expanded="false" />
+            <element signature="e#1785#1810#0" expanded="false" />
+            <element signature="e#1864#1889#0" expanded="false" />
+            <element signature="e#1943#1968#0" expanded="false" />
+            <element signature="e#1992#2738#0" expanded="false" />
+            <element signature="e#2020#2039#0" expanded="false" />
+            <element signature="e#2097#2358#0" expanded="false" />
+            <element signature="e#2097#2236#1" expanded="false" />
+            <element signature="e#2402#2438#0" expanded="false" />
+            <element signature="e#2472#2738#0" expanded="false" />
+            <element signature="e#2563#2710#0" expanded="false" />
+            <element signature="e#2578#2710#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -394,7 +416,25 @@
         <state relative-caret-position="513">
           <caret line="19" column="52" lean-forward="false" selection-start-line="19" selection-start-column="52" selection-end-line="19" selection-end-column="52" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#195#248#0" expanded="false" />
+            <element signature="e#292#314#0" expanded="false" />
+            <element signature="e#348#789#0" expanded="false" />
+            <element signature="e#433#762#0" expanded="false" />
+            <element signature="e#839#915#1" expanded="false" />
+            <element signature="e#1206#1236#1" expanded="false" />
+            <element signature="e#1352#1633#0" expanded="false" />
+            <element signature="e#1422#1594#0" expanded="false" />
+            <element signature="e#1785#1810#0" expanded="false" />
+            <element signature="e#1864#1889#0" expanded="false" />
+            <element signature="e#1943#1968#0" expanded="false" />
+            <element signature="e#1992#2738#0" expanded="false" />
+            <element signature="e#2020#2039#0" expanded="false" />
+            <element signature="e#2097#2358#0" expanded="false" />
+            <element signature="e#2097#2236#1" expanded="false" />
+            <element signature="e#2402#2438#0" expanded="false" />
+            <element signature="e#2472#2738#0" expanded="false" />
+            <element signature="e#2563#2710#0" expanded="false" />
+            <element signature="e#2578#2710#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -465,9 +505,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/crud/service/service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="891">
+          <caret line="63" column="33" lean-forward="true" selection-start-line="63" selection-start-column="33" selection-end-line="63" selection-end-column="33" />
+          <folding>
+            <element signature="e#195#248#0" expanded="false" />
+            <element signature="e#292#314#0" expanded="false" />
+            <element signature="e#348#789#0" expanded="false" />
+            <element signature="e#433#762#0" expanded="false" />
+            <element signature="e#839#915#1" expanded="false" />
+            <element signature="e#1206#1236#1" expanded="false" />
+            <element signature="e#1352#1633#0" expanded="false" />
+            <element signature="e#1422#1594#0" expanded="false" />
+            <element signature="e#1785#1810#0" expanded="false" />
+            <element signature="e#1864#1889#0" expanded="false" />
+            <element signature="e#1943#1968#0" expanded="false" />
+            <element signature="e#1992#2738#0" expanded="false" />
+            <element signature="e#2020#2039#0" expanded="false" />
+            <element signature="e#2097#2358#0" expanded="false" />
+            <element signature="e#2097#2236#1" expanded="false" />
+            <element signature="e#2402#2438#0" expanded="false" />
+            <element signature="e#2472#2738#0" expanded="false" />
+            <element signature="e#2563#2710#0" expanded="false" />
+            <element signature="e#2578#2710#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Djet/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
+        <state relative-caret-position="799">
           <caret line="40" column="27" lean-forward="false" selection-start-line="40" selection-start-column="27" selection-end-line="40" selection-end-column="27" />
           <folding />
         </state>
@@ -485,8 +553,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Djet/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="21" column="32" lean-forward="false" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
+        <state relative-caret-position="-96">
+          <caret line="11" column="25" lean-forward="true" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
           <folding>
             <element signature="e#628#656#0" expanded="true" />
           </folding>
@@ -495,37 +563,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web02/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/crud/service/service.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/crud/templates/change_list.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="19" column="24" lean-forward="true" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
+        <state relative-caret-position="147">
+          <caret line="10" column="60" lean-forward="true" selection-start-line="10" selection-start-column="60" selection-end-line="10" selection-end-column="60" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web02/crud.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+        <state relative-caret-position="486">
+          <caret line="18" column="67" lean-forward="true" selection-start-line="18" selection-start-column="67" selection-end-line="18" selection-end-column="67" />
           <folding>
             <element signature="e#19#64#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crud/templates/change_list.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-27">
+          <caret line="14" column="24" lean-forward="true" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+          <folding />
         </state>
       </provider>
     </entry>

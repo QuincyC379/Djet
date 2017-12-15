@@ -25,6 +25,18 @@ class CrudConfig:
         return urlpatterns
 
     def changelist_view(self, request):
+        """
+        处理数据表头及展示数据
+        :param request:
+        :return:
+        """
+        header_list = []
+        for header in self.list_display:
+            if isinstance(header, str):
+                val = self.model._meta.get_field(header).verbose_name
+            else:
+                val = header(self, is_header=True)
+            header_list.append(val)
 
         """
         处理展示数据
@@ -40,7 +52,7 @@ class CrudConfig:
                     val = field(self, data)
                 temp.append(val)
             new_data_list.append(temp)
-        return render(request, 'change_list.html', {'data_list': new_data_list})
+        return render(request, 'change_list.html', {'data_list': new_data_list, 'header_list': header_list})
 
     def add_view(self, request):
         return HttpResponse('添加')

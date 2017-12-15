@@ -9,7 +9,16 @@
 <div class="container">
 	<div class="row">
 		<table class="table table-bordered table-striped">
-			<thead></thead>
+			<thead>
+			<tr>
+				{% for header in header_list %}
+					<th>
+						{{ header }}
+					</th>
+				{% endfor %}
+
+			</tr>
+			</thead>
 			<tbody>
 			{% for data in data_list %}
 				<tr>
