@@ -1,14 +1,30 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import path
+from django.utils.safestring import mark_safe
 
 
 class CrudConfig:
-    list_display = []
 
     def __init__(self, model, crud_site):
         self.model = model
         self.crud_site = crud_site
+
+    # 页面展示
+    list_display = []
+
+    def get_list_display(self):
+        """
+        默认显示选择、编辑和删除
+        :return:
+        """
+        result = []
+        if self.list_display:
+            result.append(CrudConfig.checkbox)
+            result.extend(self.list_display)
+            result.append(CrudConfig.edit)
+            result.append(CrudConfig.delete)
+        return result
 
     @property
     def urls(self):
@@ -31,10 +47,11 @@ class CrudConfig:
         :return:
         """
         header_list = []
-        for header in self.list_display:
+        for header in self.get_list_display():
             if isinstance(header, str):
                 val = self.model._meta.get_field(header).verbose_name
             else:
+                # 函数处理
                 val = header(self, is_header=True)
             header_list.append(val)
 
@@ -45,13 +62,14 @@ class CrudConfig:
         new_data_list = []
         for data in data_list:
             temp = []
-            for field in self.list_display:
+            for field in self.get_list_display():
                 if isinstance(field, str):
                     val = getattr(data, field)
                 else:
                     val = field(self, data)
                 temp.append(val)
             new_data_list.append(temp)
+
         return render(request, 'change_list.html', {'data_list': new_data_list, 'header_list': header_list})
 
     def add_view(self, request):
@@ -62,6 +80,22 @@ class CrudConfig:
 
     def delete_view(self, request, obj_id):
         return HttpResponse('删除')
+
+    # 自定义checkbox,edit，delete
+    def checkbox(self, obj=None, is_header=False):
+        if is_header:
+            return '选择'
+        return mark_safe('<input type="checkbox" value=%s>' % obj.id)
+
+    def edit(self, obj=None, is_header=False):
+        if is_header:
+            return '操作0'
+        return mark_safe('<a href="/edit/%s/">编辑</a>' % obj.id)
+
+    def delete(self, obj=None, is_header=False):
+        if is_header:
+            return '操作1'
+        return mark_safe('<a href="/delete/%s/">删除</a>' % obj.id)
 
 
 class CrudSite:
