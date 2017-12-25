@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from django.urls import path, reverse
 from django.utils.safestring import mark_safe
 
+from crud.utils.Qpaginator import Pagination
+
 
 class CrudConfig:
 
@@ -76,7 +78,7 @@ class CrudConfig:
         """
         return []
 
-    def changelist_view(self, request):
+    def changelist_view(self, request, *args, **kwargs):
         """
         处理数据表头及展示数据
         :param request:
@@ -95,6 +97,15 @@ class CrudConfig:
         处理展示数据
         """
         data_list = self.model.objects.all()
+        """
+        分页处理
+        """
+        # 分页控件初始化
+        pager_obj = Pagination(request.GET.get('page', 1), data_list.count(), request.path_info, request.GET,
+                               per_page_count=2)
+        data_list = data_list[pager_obj.start:pager_obj.end]
+        html = pager_obj.bs_page_html()
+        # 分页控件处理完毕
         new_data_list = []
         for data in data_list:
             temp = []
@@ -112,9 +123,14 @@ class CrudConfig:
             new_data_list.append(temp)
 
         return render(request, 'change_list.html',
-                      {'data_list': new_data_list, 'header_list': header_list, 'add_btn': self.get_add_btn})
+                      {'data_list': new_data_list,
+                       'header_list': header_list,
+                       'add_btn': self.get_add_btn,
+                       'pager_html': html
+                       }
+                      )
 
-    def add_view(self, request):
+    def add_view(self, request, *args, **kwargs):
         """
         添加视图处理
         :param request:
@@ -138,7 +154,16 @@ class CrudConfig:
 
         return HttpResponse('添加')
 
-    def change_view(self, request, obj_id):
+    def change_view(self, request, obj_id, *args, **kwargs):
+        """
+        编辑视图
+        :param request:
+        :param obj_id:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
         class MyForm(ModelForm):
             class Meta:
                 model = self.model
@@ -154,8 +179,15 @@ class CrudConfig:
                 form.save()
             return render(request, 'change_view.html', {'form': form})
 
-    def delete_view(self, request, obj_id):
-        return HttpResponse('删除')
+    def delete_view(self, request, obj_id, *args, **kwargs):
+        """
+        删除视图，处理
+        :param request:
+        :param obj_id:
+        :return:
+        """
+        self.model.objects.filter(pk=obj_id).delete()
+        return redirect(self.get_show_url())
 
     # 自定义checkbox,edit，delete
     def checkbox(self, obj=None, is_header=False):
