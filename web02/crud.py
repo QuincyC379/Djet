@@ -13,6 +13,7 @@ class UserInfoConfig(CrudConfig):
     """
 
     list_display = ['id', 'name', 'pwd']
+    edit_link = ['name']
 
 
 service.site.regiser(UserInfo, UserInfoConfig)

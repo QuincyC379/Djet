@@ -23,8 +23,21 @@ class CrudConfig:
         if self.list_display:
             result.append(CrudConfig.checkbox)
             result.extend(self.list_display)
-            result.append(CrudConfig.edit)
+            # result.append(CrudConfig.edit)
             result.append(CrudConfig.delete)
+        return result
+
+    # 编辑当前字段
+    edit_link = []
+
+    def get_edit_link(self):
+        """
+        编辑当前字段
+        :return:
+        """
+        result = []
+        if self.edit_link:
+            result.extend(self.edit_link)
         return result
 
     # 添加按钮显示与隐藏
@@ -90,6 +103,11 @@ class CrudConfig:
                     val = getattr(data, field)
                 else:
                     val = field(self, data)
+                if field in self.get_edit_link():
+                    """
+                    如果当前的字段在需要编辑的列表中
+                    """
+                    val = self.edit_tag_link(data.pk, val)
                 temp.append(val)
             new_data_list.append(temp)
 
@@ -121,7 +139,20 @@ class CrudConfig:
         return HttpResponse('添加')
 
     def change_view(self, request, obj_id):
-        return HttpResponse('修改')
+        class MyForm(ModelForm):
+            class Meta:
+                model = self.model
+                fields = '__all__'
+
+        obj = self.model.objects.filter(pk=obj_id).first()
+        if request.method == 'GET':
+            form = MyForm(instance=obj)
+            return render(request, 'change_view.html', {'form': form})
+        elif request.method == 'POST':
+            form = MyForm(instance=obj, data=request.POST)
+            if form.is_valid():
+                form.save()
+            return render(request, 'change_view.html', {'form': form})
 
     def delete_view(self, request, obj_id):
         return HttpResponse('删除')
@@ -197,6 +228,13 @@ class CrudConfig:
         # 反向生成url需要参数时用args
         url = reverse('%s_%s_delete' % info, args=(oid,))
         return url
+
+    def edit_tag_link(self, pk, text):
+        """
+        生成编辑标签
+        :return:
+        """
+        return mark_safe('<a href={0}>{1}</a>'.format(self.get_change_url(pk), text))
 
 
 class CrudSite:
