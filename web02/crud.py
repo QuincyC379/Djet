@@ -15,5 +15,7 @@ class UserInfoConfig(CrudConfig):
     list_display = ['id', 'name', 'pwd']
     edit_link = ['name']
 
+    order_by = ['-name']
+
 
 service.site.regiser(UserInfo, UserInfoConfig)

@@ -139,6 +139,25 @@ class CrudConfig:
         # /crm/web02/userinfo/add
         return mark_safe('<a href=%s class="btn btn-success">添加</a>' % self.get_add_url())
 
+    # 自定义排序
+    order_by = []
+
+    def get_order_by(self):
+        result = []
+        result.extend(self.order_by)
+        return result
+
+    # 自定义ModelForm
+    model_form = None
+
+    def get_model_form(self):
+        if self.model_form:
+            return self.model_form
+        else:
+            meta = type('Meta', (object,), {'model': self.model, 'fields': '__all__'})
+            MyModelForm = type('MyModelForm', (ModelForm,), {'Meta': meta})
+            return MyModelForm
+
     @property
     def urls(self):
         return self.get_urls()
@@ -168,7 +187,7 @@ class CrudConfig:
         :return:
         """
 
-        data_list = self.model.objects.all()
+        data_list = self.model.objects.all().order_by(*self.get_order_by())
         # self指代当前对象
         cl = ClassList(self, data_list)
 
