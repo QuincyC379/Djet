@@ -1,10 +1,78 @@
 from django.forms import ModelForm
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.shortcuts import render, redirect
 from django.urls import path, reverse
 from django.utils.safestring import mark_safe
 
 from crud.utils.Qpaginator import Pagination
+
+"""
+抽离代码过程中出现的request不知道怎么获取问题，
+解决思路是用了装饰器wrapper单独封装了request，
+在ClassList中便可以正常使用
+"""
+
+
+class ClassList:
+    """
+    抽离代码，使业务和逻辑分离
+    """
+
+    def __init__(self, config, queryset):
+        self.config = config
+        self._model = config.model
+
+        pager_obj = Pagination(self.config.request.GET.get('page', 1), queryset.count(), self.config.request.path_info,
+                               self.config.request.GET,
+                               per_page_count=2)
+
+        self.queryset = queryset[pager_obj.start:pager_obj.end]
+        self.list_display = config.get_list_display()
+        self.edit_link = config.get_edit_link()
+        self.show_add_btn = config.get_show_add_btn()
+
+        self.pager_html = pager_obj.bs_page_html()
+
+    @property
+    def header_list(self):
+        """
+        表头部分
+        :return:
+        """
+        header_list = []
+        for header in self.config.get_list_display():
+            if isinstance(header, str):
+                val = self._model._meta.get_field(header).verbose_name
+            else:
+                # 函数处理
+                val = header(self.config, is_header=True)
+            header_list.append(val)
+
+        return header_list
+
+    @property
+    def body_list(self):
+        """
+        数据部分
+        :return:
+        """
+        new_data_list = []
+        for data in self.queryset:
+            temp = []
+            for field in self.list_display:
+                if isinstance(field, str):
+                    val = getattr(data, field)
+                else:
+                    val = field(self.config, data)
+                if field in self.edit_link:
+                    """
+                    如果当前的字段在需要编辑的列表中
+                    """
+                    val = self.config.edit_tag_link(data.pk, val)
+                temp.append(val)
+            new_data_list.append(temp)
+
+        return new_data_list
 
 
 class CrudConfig:
@@ -12,8 +80,23 @@ class CrudConfig:
     def __init__(self, model, crud_site):
         self.model = model
         self.crud_site = crud_site
+        self.request = None
+        self._query_param_key = '_list_filter'
 
-    # 页面展示
+    def wrapper(self, func):
+        """
+        封装request
+        :return:
+        """
+
+        def inner(request, *args, **kwargs):
+            self.request = request
+            return func(request, *args, **kwargs)
+
+        return inner
+
+        # 页面展示
+
     list_display = []
 
     def get_list_display(self):
@@ -63,10 +146,10 @@ class CrudConfig:
     def get_urls(self):
         info = self.model._meta.app_label, self.model._meta.model_name
         urlpatterns = [
-            path('', self.changelist_view, name='%s_%s_changelist' % info),
-            path('add/', self.add_view, name='%s_%s_add' % info),
-            path('<int:obj_id>/change/', self.change_view, name='%s_%s_change' % info),
-            path('<int:obj_id>/delete/', self.delete_view, name='%s_%s_delete' % info),
+            path('', self.wrapper(self.changelist_view), name='%s_%s_changelist' % info),
+            path('add/', self.wrapper(self.add_view), name='%s_%s_add' % info),
+            path('<int:obj_id>/change/', self.wrapper(self.change_view), name='%s_%s_change' % info),
+            path('<int:obj_id>/delete/', self.wrapper(self.delete_view), name='%s_%s_delete' % info),
         ]
         urlpatterns.extend(self.extra_url())
         return urlpatterns
@@ -80,53 +163,20 @@ class CrudConfig:
 
     def changelist_view(self, request, *args, **kwargs):
         """
-        处理数据表头及展示数据
+        处理表头及展示数据
         :param request:
         :return:
         """
-        header_list = []
-        for header in self.get_list_display():
-            if isinstance(header, str):
-                val = self.model._meta.get_field(header).verbose_name
-            else:
-                # 函数处理
-                val = header(self, is_header=True)
-            header_list.append(val)
 
-        """
-        处理展示数据
-        """
         data_list = self.model.objects.all()
-        """
-        分页处理
-        """
-        # 分页控件初始化
-        pager_obj = Pagination(request.GET.get('page', 1), data_list.count(), request.path_info, request.GET,
-                               per_page_count=2)
-        data_list = data_list[pager_obj.start:pager_obj.end]
-        html = pager_obj.bs_page_html()
-        # 分页控件处理完毕
-        new_data_list = []
-        for data in data_list:
-            temp = []
-            for field in self.get_list_display():
-                if isinstance(field, str):
-                    val = getattr(data, field)
-                else:
-                    val = field(self, data)
-                if field in self.get_edit_link():
-                    """
-                    如果当前的字段在需要编辑的列表中
-                    """
-                    val = self.edit_tag_link(data.pk, val)
-                temp.append(val)
-            new_data_list.append(temp)
+        # self指代当前对象
+        cl = ClassList(self, data_list)
 
         return render(request, 'change_list.html',
-                      {'data_list': new_data_list,
-                       'header_list': header_list,
+                      {'data_list': cl.body_list,
+                       'header_list': cl.header_list,
                        'add_btn': self.get_add_btn,
-                       'pager_html': html
+                       'pager_html': cl.pager_html
                        }
                       )
 
@@ -177,6 +227,12 @@ class CrudConfig:
             form = MyForm(instance=obj, data=request.POST)
             if form.is_valid():
                 form.save()
+
+                # 可以携带条件跳回原页面
+                query_param_str = request.GET.get(self._query_param_key)
+                now_url = '%s?%s' % (self.get_show_url(), query_param_str)
+
+                return redirect(now_url)
             return render(request, 'change_view.html', {'form': form})
 
     def delete_view(self, request, obj_id, *args, **kwargs):
@@ -210,7 +266,10 @@ class CrudConfig:
         """
         if is_header:
             return '操作0'
-        return mark_safe('<a href=%s>编辑</a>' % self.get_change_url(obj.id))
+        curr_url = self.request.GET.urlencode()
+        params = QueryDict(mutable=True)
+        params[self._query_param_key] = curr_url
+        return mark_safe('<a href=%s?%s>编辑</a>' % (self.get_change_url(obj.id), params.urlencode()))
 
     def delete(self, obj=None, is_header=False):
         """
@@ -249,6 +308,7 @@ class CrudConfig:
         info = self.model._meta.app_label, self.model._meta.model_name
         # 反向生成url需要参数时用args
         url = reverse('%s_%s_change' % info, args=(oid,))
+
         return url
 
     def get_delete_url(self, oid):
@@ -266,7 +326,11 @@ class CrudConfig:
         生成编辑标签
         :return:
         """
-        return mark_safe('<a href={0}>{1}</a>'.format(self.get_change_url(pk), text))
+        curr_url = self.request.GET.urlencode()
+        params = QueryDict(mutable=True)
+        params[self._query_param_key] = curr_url
+
+        return mark_safe('<a href={0}?{1}>{2}</a>'.format(self.get_change_url(pk), params.urlencode(), text))
 
 
 class CrudSite:
