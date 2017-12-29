@@ -11,34 +11,49 @@
 	<div class="row" style="margin-top: 15px;margin-bottom: 15px">
 		{{ add_btn }}
 	</div>
-	<div class="row">
-		<table class="table table-bordered table-striped">
-			<thead>
-			<tr>
-				{% for header in header_list %}
-					<th>
-						{{ header }}
-					</th>
-				{% endfor %}
+	<form action="" method="get">
 
-			</tr>
-			</thead>
-			<tbody>
-			{% for data in data_list %}
+		<!--搜索框展示start-->
+		{% if cl.show_search_field_form %}
+			<div class="input-group col-xs-3" style="margin-left: -15px;margin-bottom: 15px">
+				<input name="{{ cl.config.search_key }}" type="text" class="form-control" placeholder="请输入查询条件"
+					   value="{{ cl.search_form_val }}">
+				<span class="input-group-btn">
+            	<button class="btn btn-info" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+          	</span>
+			</div>
+		{% endif %}
+		<!--搜索框展示end-->
+
+		<div class="row">
+			<table class="table table-bordered table-striped">
+				<thead>
 				<tr>
-					{% for datum in data %}
-						<td>{{ datum }}</td>
+					{% for header in header_list %}
+						<th>
+							{{ header }}
+						</th>
 					{% endfor %}
+
 				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-	</div>
+				</thead>
+				<tbody>
+				{% for data in data_list %}
+					<tr>
+						{% for datum in data %}
+							<td>{{ datum }}</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</form>
+
 	<div class="row">
 		<ul class="pagination">
 			{{ pager_html|safe }}
 		</ul>
-
 	</div>
 </div>
 </body>

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.forms import ModelForm
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import render, redirect
@@ -32,6 +33,12 @@ class ClassList:
         self.show_add_btn = config.get_show_add_btn()
 
         self.pager_html = pager_obj.bs_page_html()
+        """
+        获取Boolean值为了控制前端展示
+        """
+        self.show_search_field_form = config.show_search_field_form()
+        # 前端页面赋值
+        self.search_form_val = config.request.GET.get(config.search_key, '')
 
     @property
     def header_list(self):
@@ -78,10 +85,15 @@ class ClassList:
 class CrudConfig:
 
     def __init__(self, model, crud_site):
+        """
+        :param model: 当前被注册的类
+        :param crud_site: site对象
+        """
         self.model = model
         self.crud_site = crud_site
         self.request = None
         self._query_param_key = '_list_filter'
+        self.search_key = '_q'
 
     def wrapper(self, func):
         """
@@ -95,7 +107,7 @@ class CrudConfig:
 
         return inner
 
-        # 页面展示
+    # 页面展示
 
     list_display = []
 
@@ -158,6 +170,42 @@ class CrudConfig:
             MyModelForm = type('MyModelForm', (ModelForm,), {'Meta': meta})
             return MyModelForm
 
+    # 搜索字段
+    search_fields = []
+
+    search_field_form = False
+
+    def show_search_field_form(self):
+        """
+        用于封装到classlist中，前端控制展示与隐藏
+        :return:
+        """
+        return self.search_field_form
+
+    def get_search_fields(self):
+        result = []
+        if self.search_fields:
+            result.extend(self.search_fields)
+
+        return result
+
+    def get_search_condition(self):
+        """
+        构造Q对象
+        :return:
+        """
+        query_val = self.request.GET.get(self.search_key, '')
+
+        condition = Q()
+        condition.connector = 'or'
+
+        if self.get_search_fields() and self.show_search_field_form():
+
+            for search_field in self.get_search_fields():
+                condition.children.append((search_field, query_val))
+        print(condition)
+        return condition
+
     @property
     def urls(self):
         return self.get_urls()
@@ -187,7 +235,7 @@ class CrudConfig:
         :return:
         """
 
-        data_list = self.model.objects.all().order_by(*self.get_order_by())
+        data_list = self.model.objects.filter(self.get_search_condition()).order_by(*self.get_order_by())
         # self指代当前对象
         cl = ClassList(self, data_list)
 
@@ -195,7 +243,8 @@ class CrudConfig:
                       {'data_list': cl.body_list,
                        'header_list': cl.header_list,
                        'add_btn': self.get_add_btn,
-                       'pager_html': cl.pager_html
+                       'pager_html': cl.pager_html,
+                       'cl': cl
                        }
                       )
 
@@ -206,16 +255,21 @@ class CrudConfig:
         :return:
         """
 
-        class MyForm(ModelForm):
-            class Meta:
-                model = self.model
-                fields = '__all__'
-
         if request.method == 'GET':
-            form = MyForm()
+            """
+            form不能写死，用户可以自定制字段
+            故使用self.get_model_form
+            """
+            # 获取自定制ModelForm
+            form = self.get_model_form()
             return render(request, 'add_view.html', {'form': form})
         elif request.method == 'POST':
-            form = MyForm(request.POST)
+            """
+            form不能写死，用户可以自定制字段
+            故使用self.get_model_form
+            """
+            # 获取自定制ModelForm
+            form = self.get_model_form()(request.POST)
             if form.is_valid():
                 form.save()
                 return redirect(self.get_show_url())
@@ -233,17 +287,20 @@ class CrudConfig:
         :return:
         """
 
-        class MyForm(ModelForm):
-            class Meta:
-                model = self.model
-                fields = '__all__'
-
         obj = self.model.objects.filter(pk=obj_id).first()
         if request.method == 'GET':
-            form = MyForm(instance=obj)
+            """
+            form不能写死，用户可以自定制字段
+            故使用self.get_model_form
+            """
+            form = self.get_model_form()(instance=obj)
             return render(request, 'change_view.html', {'form': form})
         elif request.method == 'POST':
-            form = MyForm(instance=obj, data=request.POST)
+            """
+            form不能写死，用户可以自定制字段
+            故使用self.get_model_form
+            """
+            form = self.get_model_form()(instance=obj, data=request.POST)
             if form.is_valid():
                 form.save()
 

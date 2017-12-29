@@ -17,5 +17,8 @@ class UserInfoConfig(CrudConfig):
 
     order_by = ['-name']
 
+    search_fields = ['pk__icontains', 'name__icontains']
+    search_field_form = True
+
 
 service.site.regiser(UserInfo, UserInfoConfig)
