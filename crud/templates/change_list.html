@@ -2,29 +2,54 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Title</title>
+	<title>数据列表页</title>
 	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
 
+	<!--添加按钮start-->
 	<div class="row" style="margin-top: 15px;margin-bottom: 15px">
 		{{ add_btn }}
 	</div>
+	<!--添加按钮end-->
+	<!--搜索框展示start-->
 	<form action="" method="get">
 
-		<!--搜索框展示start-->
 		{% if cl.show_search_field_form %}
-			<div class="input-group col-xs-3" style="margin-left: -15px;margin-bottom: 15px">
+			<div class="input-group col-xs-3 pull-right"
+				 style="margin-right: -15px">
+
 				<input name="{{ cl.config.search_key }}" type="text" class="form-control" placeholder="请输入查询条件"
 					   value="{{ cl.search_form_val }}">
 				<span class="input-group-btn">
             	<button class="btn btn-info" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-          	</span>
+          		</span>
 			</div>
 		{% endif %}
-		<!--搜索框展示end-->
 
+	</form>
+	<!--搜索框展示end-->
+	<!--批量操作actions-->
+	<form action="" method="post">
+		{% csrf_token %}
+
+		{% if cl.show_actions %}
+			<div class="input-group col-xs-3"
+				 style="margin-left: -15px;margin-bottom: 15px">
+
+				<select name="action_list" id="" class="form-control">
+					<option value="">--------请选择--------</option>
+					{% for action in cl.add_actions %}
+						<option value="{{ action.name }}">{{ action.text }}</option>
+					{% endfor %}
+				</select>
+				<span class="input-group-btn">
+            	<button class="btn btn-info" type="submit">执行</button>
+          		</span>
+			</div>
+		{% endif %}
+		<!--批量操作actions-->
 		<div class="row">
 			<table class="table table-bordered table-striped">
 				<thead>
@@ -49,7 +74,6 @@
 			</table>
 		</div>
 	</form>
-
 	<div class="row">
 		<ul class="pagination">
 			{{ pager_html|safe }}

@@ -39,6 +39,9 @@ class ClassList:
         self.show_search_field_form = config.show_search_field_form()
         # 前端页面赋值
         self.search_form_val = config.request.GET.get(config.search_key, '')
+        # 前端处理显示actions
+        self.show_actions = config.get_show_actions()
+        self.actions = config.get_actions()
 
     @property
     def header_list(self):
@@ -80,6 +83,19 @@ class ClassList:
             new_data_list.append(temp)
 
         return new_data_list
+
+    def add_actions(self):
+        """
+        改造action，用于前端显示
+        :return:
+        """
+        action_list = []
+        if self.actions:
+
+            for func in self.actions:
+                result = {'name': func.__name__, 'text': func.text}
+                action_list.append(result)
+        return action_list
 
 
 class CrudConfig:
@@ -206,6 +222,20 @@ class CrudConfig:
         print(condition)
         return condition
 
+    # 批量处理(actions)
+    show_actions = False
+
+    def get_show_actions(self):
+        return self.show_actions
+
+    actions = []
+
+    def get_actions(self):
+        result = []
+        if self.actions:
+            result.extend(self.actions)
+        return result
+
     @property
     def urls(self):
         return self.get_urls()
@@ -234,6 +264,15 @@ class CrudConfig:
         :param request:
         :return:
         """
+        if request.method == 'POST' and self.get_show_actions():  # post请求并且批量表单显示
+            func_string = request.POST.get('action_list', '')
+            if func_string:
+                func = getattr(self, func_string)
+
+                ret = func(request)
+                # 传入request为了在该函数中处理数据
+                if ret:
+                    return ret
 
         data_list = self.model.objects.filter(self.get_search_condition()).order_by(*self.get_order_by())
         # self指代当前对象
@@ -331,7 +370,7 @@ class CrudConfig:
         """
         if is_header:
             return '选择'
-        return mark_safe('<input type="checkbox" value=%s>' % obj.id)
+        return mark_safe('<input type="checkbox" value=%s name="pk">' % obj.id)
 
     def edit(self, obj=None, is_header=False):
         """
