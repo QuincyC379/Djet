@@ -1,4 +1,6 @@
-from django.db.models import Q
+import copy
+
+from django.db.models import Q, ForeignKey, ManyToManyField
 from django.forms import ModelForm
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import render, redirect
@@ -12,6 +14,105 @@ from crud.utils.Qpaginator import Pagination
 解决思路是用了装饰器wrapper单独封装了request，
 在ClassList中便可以正常使用
 """
+
+
+class QueryOpt:
+    def __init__(self, field_name, is_choice=False, multi=False, condition=None, text_func=None, pk_func=None):
+        self.field_name = field_name
+        self.is_choice = is_choice
+        self.multi = multi
+        self.condition = condition
+        # 指定了to_field,处理方式
+        self.text_func = text_func
+        self.pk_func = pk_func
+
+    def get_queryset(self, _field):
+        """
+        根据传入的condition获取数据
+        :param _field:
+        :return:
+        """
+        if self.condition:
+            return self.field_name.related_model.objects.filter(**self.condition)
+        return _field.related_model.objects.all()
+
+    def get_choices(self, _field):
+        """
+        是choice类型，获取choice
+        :param _field:
+        :return:
+        """
+        return _field.choices
+
+
+class QueryRow:
+    def __init__(self, queryopt, queryset, request):
+        """
+        :param queryopt: QueryOpt对象
+        :param queryset: 字段对应的查询数据
+        :param request: request就是request 0.0!
+        """
+        self.queryopt = queryopt
+        self.queryset = queryset
+        self.request = request
+
+    def __iter__(self):
+        params = copy.deepcopy(self.request.GET)
+        params._mutable = True
+
+        curr_id = params.get(self.queryopt.field_name)
+        curr_id_list = params.getlist(self.queryopt.field_name)
+
+        if self.queryopt.field_name in params:
+            """
+            查询字段存在并且在params中"""
+            field_list = params.pop(self.queryopt.field_name)
+            url = '%s?%s' % (self.request.path_info, params.urlencode())
+            yield mark_safe('<a href="{0}">全部</a>'.format(url))
+            params.setlist(self.queryopt.field_name, field_list)
+        else:
+            """
+            查询字段不存在或者为空"""
+            url = '{0}?{1}'.format(self.request.path_info, params.urlencode())
+            yield mark_safe('<a class="my_active" href="{0}">全部</a>'.format(url))
+        for val in self.queryset:
+            """
+            处理数据"""
+            if self.queryopt.is_choice:
+                pk, text = str(val[0]), val[1]
+            else:
+                # pk, text = str(val.pk), str(val)
+
+                pk = str(self.queryopt.pk_func(val)) if self.queryopt.pk_func else str(val.pk)
+                text = self.queryopt.text_func(val) if self.queryopt.text_func else str(val)
+
+            if not self.queryopt.multi:
+                """
+                单选"""
+                params[self.queryopt.field_name] = pk
+                url = '%s?%s' % (self.request.path_info, params.urlencode())
+                if curr_id == pk:
+                    yield mark_safe('<a class="my_active" href=%s>%s</a>' % (url, text))
+                else:
+                    yield mark_safe('<a href=%s>%s</a>' % (url, text))
+            else:
+                """
+                多选"""
+                _params = copy.deepcopy(params)
+                pk_list = _params.getlist(self.queryopt.field_name)
+
+                if pk in curr_id_list:
+                    pk_list.remove(pk)
+
+                    _params.setlist(self.queryopt.field_name, pk_list)
+                    url = '%s?%s' % (self.request.path_info, _params.urlencode())
+                    yield mark_safe('<a class="my_active" href=%s>%s</a>' % (url, text))
+                else:
+                    pk_list.append(pk)
+
+                    _params.setlist(self.queryopt.field_name, pk_list)
+                    url = '%s?%s' % (self.request.path_info, _params.urlencode())
+                    yield mark_safe('<a href=%s>%s</a>' % (url, text))
 
 
 class ClassList:
@@ -42,6 +143,30 @@ class ClassList:
         # 前端处理显示actions
         self.show_actions = config.get_show_actions()
         self.actions = config.get_actions()
+        # 综合搜索展示
+        self.show_comprehensive_search = config.get_show_comprehensive_search()
+        self.comprehensive_search = config.get_comprehensive_search()
+
+    def gen_comprehensive_search(self):
+        """
+        函数生成器,前端循环生成1行数据
+        :return:
+        """
+        for queryopt_obj in self.comprehensive_search:
+            _field = self._model._meta.get_field(queryopt_obj.field_name)
+            if isinstance(_field, ForeignKey):
+                """
+                判断是否为外键"""
+                row = QueryRow(queryopt_obj, queryopt_obj.get_queryset(_field), self.config.request)
+            elif isinstance(_field, ManyToManyField):
+                """
+                判断是否为多对多"""
+                row = QueryRow(queryopt_obj, queryopt_obj.get_queryset(_field), self.config.request)
+            else:
+                """
+                判断是否为choices"""
+                row = QueryRow(queryopt_obj, queryopt_obj.get_choices(_field), self.config.request)
+            yield row
 
     @property
     def header_list(self):
@@ -236,6 +361,24 @@ class CrudConfig:
             result.extend(self.actions)
         return result
 
+    # 组合搜索
+    comprehensive_search = []
+
+    def get_comprehensive_search(self):
+        result = []
+        if self.comprehensive_search:
+            result.extend(self.comprehensive_search)
+        return result
+
+    show_comprehensive_search = False
+
+    def get_show_comprehensive_search(self):
+        """
+        控制展示隐藏综合搜索
+        :return:
+        """
+        return self.show_comprehensive_search
+
     @property
     def urls(self):
         return self.get_urls()
@@ -273,8 +416,20 @@ class CrudConfig:
                 # 传入request为了在该函数中处理数据
                 if ret:
                     return ret
+        comprehensive_search = {}
+        queryopt_list = self.get_comprehensive_search()
+        for key in request.GET.keys():
+            val_list = request.GET.getlist(key)
+            flag = False
+            for queryopt in queryopt_list:
+                if queryopt.field_name == key:
+                    flag = True
+                    break
+            if flag:
+                comprehensive_search['%s__in' % key] = val_list
 
-        data_list = self.model.objects.filter(self.get_search_condition()).order_by(*self.get_order_by())
+        data_list = self.model.objects.filter(self.get_search_condition()).filter(**comprehensive_search).order_by(
+            *self.get_order_by()).distinct()
         # self指代当前对象
         cl = ClassList(self, data_list)
 

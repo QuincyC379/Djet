@@ -4,10 +4,38 @@
 	<meta charset="UTF-8">
 	<title>数据列表页</title>
 	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+	<style>
+		.search_list{
+			margin-left: -15px;
+		}
+		.search_list a {
+			border: blue solid 1px;
+			margin-top: 10px;
+			display: inline-block;
+			padding: 4px 6px;
+		}
+
+		.search_list a.my_active {
+			background-color: blue;
+			color: white;
+		}
+	</style>
 </head>
 <body>
 <div class="container">
+	<!--组合搜索start-->
+	<div class="search_list">
 
+		{% for gen_comprehensive_search in cl.gen_comprehensive_search %}
+			<div>
+				{% for col in gen_comprehensive_search %}
+					{{ col }}
+				{% endfor %}
+			</div>
+		{% endfor %}
+
+	</div>
+	<!--组合搜索end-->
 	<!--添加按钮start-->
 	<div class="row" style="margin-top: 15px;margin-bottom: 15px">
 		{{ add_btn }}
