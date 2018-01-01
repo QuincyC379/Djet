@@ -17,3 +17,18 @@ update-log:
 
 2018-01-01 增加综合搜索功能及指定了to_field处理方式
 
+#### HOW TO USE IT:
+
+    在web02的crud文件注册models中的类，Example:
+    
+    class UserInfoConfig(CrudConfig):
+    
+    """必须继承CrudConfig"""
+    
+        list_display=['字段']
+        
+    service.site.regiser(UserInfo, UserInfoConfig)
+    
+    更多用法详见代码！
+    
+
