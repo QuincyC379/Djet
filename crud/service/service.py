@@ -1,6 +1,7 @@
 import copy
+import json
 
-from django.db.models import Q, ForeignKey, ManyToManyField
+from django.db.models import Q, ForeignKey, ManyToManyField, ManyToOneRel
 from django.forms import ModelForm
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import render, redirect
@@ -81,8 +82,10 @@ class QueryRow:
             if self.queryopt.is_choice:
                 pk, text = str(val[0]), val[1]
             else:
+                # 没有指定to_field
                 # pk, text = str(val.pk), str(val)
 
+                # 指定to_field
                 pk = str(self.queryopt.pk_func(val)) if self.queryopt.pk_func else str(val.pk)
                 text = self.queryopt.text_func(val) if self.queryopt.text_func else str(val)
 
@@ -126,7 +129,7 @@ class ClassList:
 
         pager_obj = Pagination(self.config.request.GET.get('page', 1), queryset.count(), self.config.request.path_info,
                                self.config.request.GET,
-                               per_page_count=2)
+                               per_page_count=5)
 
         self.queryset = queryset[pager_obj.start:pager_obj.end]
         self.list_display = config.get_list_display()
@@ -411,7 +414,7 @@ class CrudConfig:
             func_string = request.POST.get('action_list', '')
             if func_string:
                 func = getattr(self, func_string)
-
+                # 执行func函数
                 ret = func(request)
                 # 传入request为了在该函数中处理数据
                 if ret:
@@ -448,15 +451,21 @@ class CrudConfig:
         :param request:
         :return:
         """
-
+        popup_param = request.GET.get('_popup')
         if request.method == 'GET':
             """
             form不能写死，用户可以自定制字段
             故使用self.get_model_form
             """
             # 获取自定制ModelForm
-            form = self.get_model_form()
-            return render(request, 'add_view.html', {'form': form})
+            form_class = self.get_model_form()
+            # 获取当期的form对象
+            form = form_class()
+
+            """
+            此处抽离了form处理代码"""
+
+            return render(request, 'add_view.html', {'form': form, 'config': self})
         elif request.method == 'POST':
             """
             form不能写死，用户可以自定制字段
@@ -464,10 +473,39 @@ class CrudConfig:
             """
             # 获取自定制ModelForm
             form = self.get_model_form()(request.POST)
+
             if form.is_valid():
-                form.save()
-                return redirect(self.get_show_url())
-            return render(request, 'add_view.html', {'form': form})
+                data_obj = form.save()
+                """
+                处理popup请求"""
+                model_name = request.GET.get('model_name')
+                related_name = request.GET.get('related_name')
+                res = {'status': False, 'pk': None, 'text': None, 'popup_id': popup_param}
+                if popup_param:
+                    """如果是popup请求"""
+                    for related_object in data_obj._meta.related_objects:
+                        """获取related_object相关的model_name,related_name"""
+                        _model_name = related_object.field.model._meta.model_name
+                        _related_name = related_object.related_name
+                        _limit_choices_to = related_object.limit_choices_to
+                        """处理to_field,pk"""
+                        if isinstance(type(related_object), ManyToOneRel):
+                            _field_name = related_object.field_name
+                        else:
+                            _field_name = 'pk'
+                        if model_name == _model_name and related_name == _related_name:
+                            is_ex = self.model.objects.filter(**_limit_choices_to).exists()
+
+                            if is_ex:
+                                res['status'] = True
+                                res['pk'] = getattr(data_obj, _field_name)
+                                res['text'] = str(data_obj)
+                                return render(request, 'popup_res.html', {'res': json.dumps(res, ensure_ascii=False)})
+
+                    return render(request, 'popup_res.html', {'res': json.dumps(res, ensure_ascii=False)})
+                else:
+                    return redirect(self.get_show_url())
+            return render(request, 'add_view.html', {'form': form, 'config': self})
 
         return HttpResponse('添加')
 
@@ -488,7 +526,7 @@ class CrudConfig:
             故使用self.get_model_form
             """
             form = self.get_model_form()(instance=obj)
-            return render(request, 'change_view.html', {'form': form})
+            return render(request, 'change_view.html', {'form': form, 'config': self})
         elif request.method == 'POST':
             """
             form不能写死，用户可以自定制字段
@@ -503,7 +541,7 @@ class CrudConfig:
                 now_url = '%s?%s' % (self.get_show_url(), query_param_str)
 
                 return redirect(now_url)
-            return render(request, 'change_view.html', {'form': form})
+            return render(request, 'change_view.html', {'form': form, 'config': self})
 
     def delete_view(self, request, obj_id, *args, **kwargs):
         """

@@ -15,7 +15,7 @@ class UserInfo(models.Model):
         (2, '女')
     )
     gender = models.IntegerField(verbose_name='性别', choices=gender_choices, default=1)
-    dept = models.ManyToManyField('Department', verbose_name='隶属部门', )
+    dept = models.ManyToManyField('Department', verbose_name='隶属部门')
     usertype = models.ForeignKey('UserType', verbose_name='用户类型', on_delete=models.CASCADE, null=True, blank=True,
                                  to_field='code')
 

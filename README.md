@@ -17,6 +17,8 @@ update-log:
 
 2018-01-01 增加综合搜索功能及指定了to_field处理方式
 
+2018-01-01 增加外键多对多功能popup添加方式，修复部分bug
+
 #### HOW TO USE IT:
 
     在web02的crud文件注册models中的类，Example:

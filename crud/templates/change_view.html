@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load form_control %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,7 @@
 </head>
 <body>
 <div class="container">
-	{% include 'myform.html' %}
+	{% my_form config form %}
 </div>
 
 </body>
